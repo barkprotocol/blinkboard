@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { BarChart2, Gift, Coins, ShoppingBag, Palette, Layers, Settings, Users, Heart, Repeat, ChevronRight, ChevronLeft, Moon, Sun, LogOut } from 'lucide-react'
@@ -14,26 +14,26 @@ import { useTheme } from 'next-themes'
 const navItems = [
   { 
     name: 'Overview', 
-    icon: <BarChart2 className="w-5 h-5" />, 
+    icon: BarChart2, 
     href: '/blinkboard' 
   },
   { 
     name: 'Assets', 
-    icon: <Palette className="w-5 h-5" />, 
+    icon: Palette, 
     href: '/blinkboard/assets',
     subItems: [
-      { name: 'NFT', icon: <Palette className="w-4 h-4" />, href: '/blinkboard/assets/nft' },
-      { name: 'Tokens', icon: <Coins className="w-4 h-4" />, href: '/blinkboard/assets/tokens' },
+      { name: 'NFT', icon: Palette, href: '/blinkboard/assets/nft' },
+      { name: 'Tokens', icon: Coins, href: '/blinkboard/assets/tokens' },
     ]
   },
-  { name: 'Payments', icon: <Coins className="w-5 h-5" />, href: '/blinkboard/payments' },
-  { name: 'Donations', icon: <Heart className="w-5 h-5" />, href: '/blinkboard/donations' },
-  { name: 'Commerce', icon: <ShoppingBag className="w-5 h-5" />, href: '/blinkboard/commerce' },
-  { name: 'Gift', icon: <Gift className="w-5 h-5" />, href: '/blinkboard/gift' },
-  { name: 'Swap', icon: <Repeat className="w-5 h-5" />, href: '/blinkboard/swap' },
-  { name: 'Staking', icon: <Layers className="w-5 h-5" />, href: '/blinkboard/staking' },
-  { name: 'DAO', icon: <Users className="w-5 h-5" />, href: '/blinkboard/dao' },
-  { name: 'Settings', icon: <Settings className="w-5 h-5" />, href: '/blinkboard/settings' },
+  { name: 'Payments', icon: Coins, href: '/blinkboard/payments' },
+  { name: 'Donations', icon: Heart, href: '/blinkboard/donations' },
+  { name: 'Commerce', icon: ShoppingBag, href: '/blinkboard/commerce' },
+  { name: 'Gift', icon: Gift, href: '/blinkboard/gift' },
+  { name: 'Swap', icon: Repeat, href: '/blinkboard/swap' },
+  { name: 'Staking', icon: Layers, href: '/blinkboard/staking' },
+  { name: 'DAO', icon: Users, href: '/blinkboard/dao' },
+  { name: 'Settings', icon: Settings, href: '/blinkboard/settings' },
 ]
 
 export function Sidebar() {
@@ -41,11 +41,56 @@ export function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const { theme, setTheme } = useTheme()
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const toggleCollapse = useCallback(() => {
+    setIsCollapsed(prev => !prev)
+  }, [])
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      setIsCollapsed(!isCollapsed)
+      toggleCollapse()
     }
-  }
+  }, [toggleCollapse])
+
+  const renderNavItem = useCallback((item: typeof navItems[0], isSubItem = false) => {
+    const Icon = item.icon
+    const isActive = pathname === item.href || (item.subItems && pathname.startsWith(item.href))
+
+    return (
+      <Tooltip key={item.name}>
+        <TooltipTrigger asChild>
+          <Link 
+            href={item.href}
+            className={`flex items-center p-2 ${isSubItem ? 'pl-8' : ''} rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 ${isActive ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
+          >
+            <span className={`${isActive ? 'text-primary' : 'text-[#D0BFB4]'}`}>
+              <Icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-[#D0BFB4]'}`} />
+            </span>
+            {!isCollapsed && <span className={`ml-3 ${isActive ? 'text-primary font-medium' : 'text-gray-700 dark:text-gray-300'}`}>{item.name}</span>}
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <p>{item.name}</p>
+        </TooltipContent>
+      </Tooltip>
+    )
+  }, [isCollapsed, pathname])
+
+  const renderNavItems = useMemo(() => navItems.map(item => (
+    <div key={item.name}>
+      {item.subItems ? (
+        <Collapsible>
+          <CollapsibleTrigger className="w-full">
+            {renderNavItem(item)}
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            {item.subItems.map(subItem => renderNavItem(subItem, true))}
+          </CollapsibleContent>
+        </Collapsible>
+      ) : (
+        renderNavItem(item)
+      )}
+    </div>
+  )), [renderNavItem])
 
   return (
     <TooltipProvider>
@@ -63,71 +108,7 @@ export function Sidebar() {
         </div>
         <ScrollArea className="flex-grow py-4">
           <nav className="space-y-1 px-3">
-            {navItems.map((item) => (
-              <div key={item.name}>
-                {item.subItems ? (
-                  <Collapsible>
-                    <CollapsibleTrigger className="w-full">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className={`flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 ${pathname.startsWith(item.href) ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
-                            <span className={`${pathname.startsWith(item.href) ? 'text-primary' : 'text-[#D0BFB4]'}`}>
-                              {React.cloneElement(item.icon, { className: `w-5 h-5 ${pathname.startsWith(item.href) ? 'text-primary' : 'text-[#D0BFB4]'}` })}
-                            </span>
-                            {!isCollapsed && (
-                              <>
-                                <span className={`ml-3 ${pathname.startsWith(item.href) ? 'text-primary font-medium' : 'text-gray-700 dark:text-gray-300'}`}>{item.name}</span>
-                                <ChevronRight className="ml-auto w-4 h-4 text-[#D0BFB4]" />
-                              </>
-                            )}
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          <p>{item.name}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      {item.subItems.map((subItem) => (
-                        <Tooltip key={subItem.name}>
-                          <TooltipTrigger asChild>
-                            <Link 
-                              href={subItem.href} 
-                              className={`flex items-center p-2 pl-8 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 ${pathname === subItem.href ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
-                            >
-                              <span className={`${pathname === subItem.href ? 'text-primary' : 'text-[#D0BFB4]'}`}>
-                                {React.cloneElement(subItem.icon, { className: `w-4 h-4 ${pathname === subItem.href ? 'text-primary' : 'text-[#D0BFB4]'}` })}
-                              </span>
-                              {!isCollapsed && <span className={`ml-3 ${pathname === subItem.href ? 'text-primary font-medium' : 'text-gray-700 dark:text-gray-300'}`}>{subItem.name}</span>}
-                            </Link>
-                          </TooltipTrigger>
-                          <TooltipContent side="right">
-                            <p>{subItem.name}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      ))}
-                    </CollapsibleContent>
-                  </Collapsible>
-                ) : (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link 
-                        href={item.href} 
-                        className={`flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 ${pathname === item.href ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
-                      >
-                        <span className={`${pathname === item.href ? 'text-primary' : 'text-[#D0BFB4]'}`}>
-                          {React.cloneElement(item.icon, { className: `w-5 h-5 ${pathname === item.href ? 'text-primary' : 'text-[#D0BFB4]'}` })}
-                        </span>
-                        {!isCollapsed && <span className={`ml-3 ${pathname === item.href ? 'text-primary font-medium' : 'text-gray-700 dark:text-gray-300'}`}>{item.name}</span>}
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      <p>{item.name}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </div>
-            ))}
+            {renderNavItems}
           </nav>
         </ScrollArea>
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
@@ -144,7 +125,7 @@ export function Sidebar() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsCollapsed(!isCollapsed)}
+              onClick={toggleCollapse}
               onKeyDown={handleKeyDown}
               aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               className={`${isCollapsed ? 'mx-auto' : ''} hover:bg-gray-100 dark:hover:bg-gray-700`}
@@ -160,7 +141,7 @@ export function Sidebar() {
               </Avatar>
               <div className="flex-grow">
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Barker</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">support@barkprotocol.net</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">info@barkprotocol.net</p>
               </div>
               <Button
                 variant="ghost"
