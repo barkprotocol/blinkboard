@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BarChart, Wallet, Send, ShoppingBag, Users, Plus, Search, ArrowUpRight, ArrowDownRight, Crown, Dog, ChevronLeft, ChevronRight, SortAsc, SortDesc, Bell, Zap, Trophy, PieChart, LineChart, Activity, Sparkles, TrendingUp, ThumbsUp } from 'lucide-react'
+import { BarChart, Wallet, Send, ShoppingBag, Users, Plus, Search, ArrowUpRight, ArrowDownRight, Crown, Dog, ChevronLeft, ChevronRight, SortAsc, SortDesc, Bell, Zap, Trophy, PieChart, LineChart, Activity, Sparkles, TrendingUp, ThumbsUp, VoteIcon } from 'lucide-react'
 import { BlinkCard } from '@/components/ui/blink-card'
 import { useToast } from "@/components/ui/use-toast"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -31,7 +31,7 @@ import {
   Cell
 } from 'recharts'
 
-// Mock data for charts (unchanged)
+// Mock data for charts
 const initialData = [
   { name: 'Jan', value: 400 },
   { name: 'Feb', value: 300 },
@@ -56,6 +56,12 @@ const blinkPerformanceData = [
 ]
 
 const SAND_COLORS = ['#F4E0C7', '#E6CCB2', '#D8B79E', '#C9A28A', '#BB8E76']
+
+const governanceData = [
+  { id: 1, title: "Increase BARK staking rewards", votes: 1200, status: "Active" },
+  { id: 2, title: "Add new Blink category", votes: 980, status: "Active" },
+  { id: 3, title: "Modify community guidelines", votes: 750, status: "Ended" },
+]
 
 export default function Dashboard() {
   const { toast } = useToast()
@@ -141,6 +147,7 @@ export default function Dashboard() {
   ])
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [marketOverviewType, setMarketOverviewType] = useState('blinks')
 
   const fetchData = useCallback(async () => {
     setIsLoading(true)
@@ -227,6 +234,19 @@ export default function Dashboard() {
     setIsSidebarOpen(prev => !prev)
   }, [])
 
+  const getMarketOverviewData = useCallback(() => {
+    switch (marketOverviewType) {
+      case 'blinks':
+        return blinkValueData
+      case 'tokens':
+        return blinkValueData.map(item => ({ ...item, value: item.value * 2 }))
+      case 'marketPrices':
+        return blinkValueData.map(item => ({ ...item, value: item.value * 0.5 }))
+      default:
+        return blinkValueData
+    }
+  }, [marketOverviewType])
+
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
@@ -235,7 +255,7 @@ export default function Dashboard() {
         <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
           <div className="container mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100">BARK Blink Dashboard</h2>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100">Dashboard</h3>
               <div className="flex items-center space-x-2 md:space-x-4">
                 <Dialog>
                   <DialogTrigger asChild>
@@ -301,11 +321,11 @@ export default function Dashboard() {
               </Card>
               <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">BARK Balance</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">Balance</CardTitle>
                   <Wallet className="h-4 w-4 text-[#D0BFB4]" aria-hidden="true" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">5,678 BARK</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">15,678 BARK</div>
                   <p className="text-xs text-green-500 flex items-center mt-1">
                     <ArrowUpRight className="h-3 w-3 mr-1" aria-hidden="true" />
                     5% from last week
@@ -315,7 +335,7 @@ export default function Dashboard() {
               </Card>
               <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">BARK Membership</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">Membership</CardTitle>
                   <Crown className="h-4 w-4 text-[#D0BFB4]" aria-hidden="true" />
                 </CardHeader>
                 <CardContent>
@@ -329,7 +349,7 @@ export default function Dashboard() {
               </Card>
               <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">BARK Mascot</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">BARK NFT Mascot</CardTitle>
                   <Dog className="h-4 w-4 text-[#D0BFB4]" aria-hidden="true" />
                 </CardHeader>
                 <CardContent>
@@ -379,12 +399,22 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
               <Card className="bg-white dark:bg-gray-800 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-gray-800 dark:text-gray-100">Blink Value Trend</CardTitle>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-xl font-semibold text-gray-800 dark:text-gray-100">BARK Market Overview</CardTitle>
+                  <Select value={marketOverviewType} onValueChange={setMarketOverviewType}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select overview type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="blinks">Blinks</SelectItem>
+                      <SelectItem value="tokens">Tokens</SelectItem>
+                      <SelectItem value="marketPrices">Market Prices</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <RechartsLineChart data={blinkValueData}>
+                    <RechartsLineChart data={getMarketOverviewData()}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="name" stroke="#6B7280" />
                       <YAxis stroke="#6B7280" />
@@ -392,7 +422,11 @@ export default function Dashboard() {
                       <Line type="monotone" dataKey="value" stroke="#D0BFB4" strokeWidth={2} />
                     </RechartsLineChart>
                   </ResponsiveContainer>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">Your Blinks are gaining value! Keep creating and engaging with the community.</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+                    {marketOverviewType === 'blinks' && "Your Blinks are gaining value! Keep creating and engaging with the community."}
+                    {marketOverviewType === 'tokens' && "BARK token value is on the rise. Consider staking or participating in governance."}
+                    {marketOverviewType === 'marketPrices' && "Stay informed about market trends to make informed decisions."}
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -400,7 +434,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               <Card className="bg-white dark:bg-gray-800 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-gray-800 dark:text-gray-100">Blink Performance Breakdown</CardTitle>
+                  <CardTitle className="text-xl font-semibold text-gray-800 dark:text-gray-100">Blinks Performance Breakdown</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -429,12 +463,12 @@ export default function Dashboard() {
                       </div>
                     ))}
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">Your Blinks are performing well across different metrics. Focus on increasing shares and comments to boost engagement.</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">Your Compressed NFTs (CNFT) are performing well across different metrics. Focus on increasing shares and comments to boost engagement.</p>
                 </CardContent>
               </Card>
               <Card className="bg-white dark:bg-gray-800 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-gray-800 dark:text-gray-100">User Engagement</CardTitle>
+                  <CardTitle className="text-xl font-semibold text-gray-800 dark:text-gray-100">User Engagement & Governance</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -460,7 +494,24 @@ export default function Dashboard() {
                       <Progress value={85} className="w-full" />
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">Great job on community interaction! Consider ways to increase the Blink creation rate to boost overall engagement.</p>
+                  <div className="mt-6">
+                    <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Governance Overview</h4>
+                    <ul className="space-y-2">
+                      {governanceData.map((proposal) => (
+                        <li key={proposal.id} className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{proposal.title}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{proposal.votes} votes • {proposal.status}</p>
+                          </div>
+                          <Button variant="outline" size="sm">
+                            <VoteIcon className="h-4 w-4 mr-1" />
+                            Vote
+                          </Button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">Great job on community interaction! Consider ways to increase the Blink creation rate and participate in governance to boost overall engagement.</p>
                 </CardContent>
               </Card>
             </div>
@@ -492,7 +543,7 @@ export default function Dashboard() {
 
             <Card className="bg-white dark:bg-gray-800 shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-xl font-semibold text-gray-800 dark:text-gray-100">Your Blinks</CardTitle>
+                <CardTitle className="text-xl font-semibold text-gray-800 dark:text-gray-100">Collection</CardTitle>
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button className="bg-[#D0BFB4] hover:bg-[#C0AFA4] text-white">

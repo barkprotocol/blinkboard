@@ -1,4 +1,4 @@
-import './globals.css'
+import './styles/globals.css'
 import { Inter } from 'next/font/google'
 import { SolanaWalletProvider } from '@/components/providers/solana-wallet-provider'
 import { ToastProvider } from '@/components/ui/toast-provider'

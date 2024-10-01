@@ -9,7 +9,6 @@ const nextConfig = {
       'raw.githubusercontent.com',
     ],
   },
-  // Add any other configuration options here
 }
 
 module.exports = nextConfig
