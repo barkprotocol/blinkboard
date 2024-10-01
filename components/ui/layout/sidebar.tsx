@@ -29,20 +29,20 @@ const navItems: NavItem[] = [
   { 
     name: 'Assets', 
     icon: Palette, 
-    href: '/blinkboard/assets',
+    href: '/pages/assets',
     subItems: [
-      { name: 'NFT', icon: Palette, href: '/blinkboard/assets/nft' },
-      { name: 'Tokens', icon: Coins, href: '/blinkboard/assets/tokens' },
+      { name: 'NFT', icon: Palette, href: '/pages/assets/nft' },
+      { name: 'Tokens', icon: Coins, href: '/pages/assets/tokens' },
     ]
   },
   { name: 'Payments', icon: Coins, href: '/blinkboard/pages/payments' },
   { name: 'Donations', icon: Heart, href: '/blinkboard/pages/donations' },
-  { name: 'Commerce', icon: ShoppingBag, href: '/blinkboard/pages/commerce' },
-  { name: 'Gift', icon: Gift, href: '/blinkboard/pages/gift' },
-  { name: 'Swap', icon: Repeat, href: '/blinkboard/pages/swap' },
-  { name: 'Staking', icon: Layers, href: '/blinkboard/pages/staking' },
-  { name: 'Governance', icon: Users, href: '/blinkboard/pages/governance' },
-  { name: 'Settings', icon: Settings, href: '/blinkboard/pages/settings' },
+  { name: 'Commerce', icon: ShoppingBag, href: '/pages/commerce' },
+  { name: 'Gift', icon: Gift, href: '/pages/gift/' },
+  { name: 'Swap', icon: Repeat, href: '/pages/swap' },
+  { name: 'Staking', icon: Layers, href: '/pages/staking' },
+  { name: 'Governance', icon: Users, href: '/pages/governance' },
+  { name: 'Settings', icon: Settings, href: '/pages/settings' },
 ]
 
 function ErrorFallback({error, resetErrorBoundary}: {error: Error, resetErrorBoundary: () => void}) {
