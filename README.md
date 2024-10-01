@@ -1,108 +1,83 @@
-# BARK | Blinkboard
+# BARK Blink Dashboard
 
-Blinkboard is a cutting-edge dashboard application for managing and interacting with BARK Protocol & Blinks. It provides a user-friendly interface for creating, viewing, and analyzing Blinks, as well as managing NFTs, membership, BARK tokens and participating in governance.
+![BARK Blinkboard UI](.github/assets/blinkboard.png)
+
+## Overview
+
+The BARK Protocol Dashboard "Blinkboard" is a web application built with Next.js and TypeScript, designed to interact with the Solana blockchain. It allows users to create, send, and sell Solana Blinks, track BARK tokens, and participate in governance. The dashboard supports dark and light themes, is responsive, and is ready for internationalization.
 
 ## Features
 
-- 📊 Interactive dashboard for Blink management
-- 💰 BARK token balance and transaction tracking
-- 🏛 Governance participation and voting
-- 🌓 Dark and light mode support
-- 🌐 Internationalization ready
-- 📱 Responsive design for desktop and mobile
+- **Create, Send, and Sell Solana Blinks**: Effortlessly create, send, and list your Blinks for sale on the marketplace.
+- **Interactive Dashboard**: Easily manage and analyze your Blinks.
+- **BARK Token Management**: Track your BARK token balance and transaction history.
+- **Governance Participation**: Engage in voting and governance proposals.
+- **Theme Support**: Switch between dark and light modes.
+- **Internationalization**: Ready for multiple languages and locales.
+- **Responsive Design**: Seamlessly access the dashboard on desktop and mobile devices.
+- **Airdrop Management**: Create and manage airdrop campaigns for NFTs and SPL tokens.
+- **NFT Minting**: Mint exclusive BARK NFTs using Solana's blockchain effortlessly.
+- **Leaderboard**: Engage with the community by tracking top contributors and mascots.
+- **Wallet Integration**: Connect with popular Solana wallets like Phantom, Solflare, and Backpack.
+- **Community Engagement**: Support and reward community members with a royalty system on NFT resales.
 
-## Getting Started
+## Installation
+
+To get started with the BARK Protocol Dashboard, follow these steps:
 
 ### Prerequisites
 
 - Node.js (v14 or later)
-- npm or yarn
-- Git
+- Yarn or npm
 
-### Installation
+### Clone the Repository
 
-1. Clone the repository:
+```bash
+git clone https://github.com/barkprotocol/blinkboard.git
+```
 
-   ```bash
-   git clone https://github.com/barkprotocol/blinkboard.git
-   cd blinkboard
+### Install Dependencies
 
-2. Install dependencies:
-
-```shellscript
+```bash
 pnpm install
 # or
 yarn install
 ```
 
-3. Set up environment variables:
+### Set Up Environment Variables
 
-Copy the `.env.example` file to `.env.local` and fill in the required values:
+Create a `.env.local` file in the root directory and add your environment variables:
 
-```shellscript
-cp .env.example .env.local
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SOLANA_NETWORK=devnet
+NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
+NEXT_PUBLIC_MINT_API_URL=
+TOKEN_PROGRAM_ID=TokenkegQfeZyiNwAJbNbGKPFXkQd5J8X8wnF8MPzYx
+NFT_PROGRAM_ID=gEb7nD9yLkau1P4uyMdke9byJNrat61suH4vYiPUuiR
+DEFAULT_WALLET_ADDRESS=gEb7nD9yLkau1P4uyMdke9byJNrat61suH4vYiPUuiR
+METADATA_SERVICE_URL=https://api.example.com/upload-metadata
+ERROR_TRACKING_SERVICE_URL=https://errors.example.com/report
+SECRET_KEY=your-secret-key-here
+JWT_SECRET=your-jwt-secret-key-here
+NODE_ENV=development
 ```
 
-4. Run the development server:
+### Start the Development Server
 
-```shellscript
+```bash
 npm run dev
 # or
 yarn dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
-
-
-## Usage
-
-After starting the development server, you can:
-
-- Create and manage Blinks from the dashboard
-- View your BARK token balance and transaction history
-- Participate in governance proposals and voting
-- Customize your experience with theme and language settings
-
-
-## Project Structure
-
-```blinkboard/
-├── app/
-│   ├── dashboard/
-│   │   ├── components/
-│   │   └── page.tsx
-│   ├── marketplace/
-│   ├── governance/
-│   ├── about/
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   └── ui/
-├── lib/
-├── public/
-├── styles/
-├── .env.example
-├── .gitignore
-├── next.config.js
-├── package.json
-├── README.md
-└── tsconfig.json
-```
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.`
 
 ## Contributing
 
-We welcome contributions to Blinkboard! Please follow these steps to contribute:
-
-1. Fork the repository
-2. Create a new branch: `git checkout -b feature/your-feature-name`
-3. Make your changes and commit them: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin feature/your-feature-name`
-5. Submit a pull request
-
-Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
+We welcome contributions! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for more information on how to contribute to the project.
 
 ## License
 
-Apache2.0 - see the [LICENSE](LICENSE) file for details.
-
-
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
